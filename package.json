@@ -1,0 +1,32 @@
+{
+  "name": "node-test",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js > console.log",
+    "debug": "nodemon server.js > console.log"
+  },
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "connect": "^3.7.0",
+    "connect-mongo": "^3.2.0",
+    "consolidate": "^0.16.0",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "express": "^4.16.4",
+    "express-session": "^1.17.1",
+    "fs": "0.0.1-security",
+    "http-errors": "^1.6.3",
+    "image-size": "^1.0.0",
+    "jwt-simple": "^0.5.6",
+    "mongodb": "^3.6.6",
+    "morgan": "~1.9.1",
+    "multer": "^1.4.3",
+    "nodemon": "^2.0.12",
+    "npm": "^7.11.2",
+    "sharp": "^0.29.1",
+    "swig": "^1.4.2",
+    "yarn": "^1.22.17"
+  }
+}

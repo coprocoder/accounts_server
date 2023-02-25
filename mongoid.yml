@@ -1,0 +1,4 @@
+production:
+  sessions:
+    default:
+      uri: mongodb+srv://coprocoder:F3PU5B9006151@sandbox.ghrgejj.mongodb.net/test
