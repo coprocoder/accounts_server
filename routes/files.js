@@ -22,20 +22,20 @@ function createHashedFilename(filename) {
   return filename_hash.replace("/", "").replace("\\", "");
 }
 
-async function generateAndSaveImageMiniature(file, filename_hash) {
+async function generateAndSaveThumbnail(file, filename_hash) {
   console.log("file", file);
 
   let full_abs_path = path.resolve(file.path);
 
   let resize_rel_path = path.join(
     file.destination,
-    "../resized",
+    "../thumbnail",
     filename_hash
   );
   let resize_abs_path = path.resolve(resize_rel_path);
 
   // Добавляем в ответ путь к resize img
-  file["resized"] = resize_rel_path;
+  file["thumbnail"] = resize_rel_path;
 
   // Вычисление размеров миниатюры
   await sizeOf(full_abs_path)
@@ -64,6 +64,16 @@ async function generateAndSaveImageMiniature(file, filename_hash) {
   return file;
 }
 
+// Генерируем миниатюры
+async function generateMiniatures(files) {
+  const promises = files.map((file, index) => {
+    generateAndSaveThumbnail(file, filenames_lish_hashnames[index]);
+  });
+  await Promise.all(promises);
+  filenames_lish_hashnames = [];
+  return files;
+}
+
 let filenames_lish_hashnames = [];
 var storage_img = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -78,20 +88,12 @@ var storage_img = multer.diskStorage({
 });
 var uploadImg = multer({storage: storage_img});
 
-router.post("/upload_img", uploadImg.array("file"), async (req, res, next) => {
+router.post("/upload_img", uploadImg.array("image"), async (req, res, next) => {
   console.log("upload_img", req.files);
   console.log("filenames_lish_hashnames", filenames_lish_hashnames);
-
-  // Генерируем миниатюры
-  async function generateMiniatures() {
-    const promises = req.files.map((file, index) => {
-      generateAndSaveImageMiniature(file, filenames_lish_hashnames[index]);
-    });
-    await Promise.all(promises);
-    filenames_lish_hashnames = [];
-    return res.status(200).send(req.files);
-  }
-  generateMiniatures();
+  const filesWithThumbs = await generateMiniatures(req.files);
+  console.log({filesWithThumbs});
+  res.status(200).send(filesWithThumbs);
 });
 
 module.exports = router;

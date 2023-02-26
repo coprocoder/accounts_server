@@ -13,13 +13,12 @@ const config = require("./config/config.json");
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || "3001");
+const port = normalizePort(process.env.PORT || "5001");
 
 // Задаём параметры подключения к БД
 const MongoClient = require("mongodb").MongoClient;
 const url_db = config.db;
 const mongoClient = new MongoClient(url_db, {useUnifiedTopology: true});
-let dbClient;
 
 mongoClient.connect(function (err, client) {
   if (err) return console.log(err);

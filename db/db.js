@@ -49,9 +49,6 @@ module.exports.update = function (cur_db, cur_collection, filter, fields) {
       if (err) {
         reject(err);
       }
-      if (!!fields.password) {
-        reject({message: "Вы не можете изменять пароль"});
-      }
       client
         .db(cur_db)
         .collection(cur_collection)

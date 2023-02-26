@@ -13,12 +13,6 @@ const mimetypes = require("./config/mimetypes.js");
 // const session = require("express-session");
 // const MongoStore = require("connect-mongo")(session);
 
-//### Routers Files
-const authRouter = require("./routes/auth");
-const usersRouter = require("./routes/users");
-const filesRouter = require("./routes/files");
-const profileRouter = require("./routes/profile");
-
 var app = express();
 app.use(cors());
 app.options("*", cors());
@@ -31,8 +25,8 @@ app.set("view engine", "html");
 app.use(logger("dev"));
 
 //### req.body parse
-app.use(express.urlencoded({limit: "10mb", extended: true})); // этим мы делаем доступным объект req.body (ну а в нем поля формы)
-app.use(express.json({limit: "10mb", extended: true})); // Для просмотра request.body в POST
+app.use(express.urlencoded({limit: "10mb", extended: true})); // for parsing application/x-   www-form-urlencoded
+app.use(express.json({limit: "10mb", extended: true})); // for parsing application/json
 
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
@@ -59,7 +53,7 @@ app.use(function (req, res, next) {
 
 // TODO: CDN via proxy Nginx & FTP
 //### Проверка URL по его окончанию. Если файл, то вернуть его, иначе перейти по маршруту
-app.use("/", function (req, res, next) {
+app.use("/api", function (req, res, next) {
   var filePath = "." + req.url;
   var extname = path.extname(filePath);
   var contentType = mimetypes[extname];
@@ -70,11 +64,17 @@ app.use("/", function (req, res, next) {
   } else next();
 });
 
+//### Routers Files
+const authRouter = require("./routes/auth");
+const usersRouter = require("./routes/users");
+const filesRouter = require("./routes/files");
+const accountRouter = require("./routes/account");
+
 //### Routes
 app.use("/api/auth", authRouter); // Авторизация/регистрация
-app.use("/api/users", usersRouter); // Все пользователи
+app.use("/api/people", usersRouter); // Все пользователи
 app.use("/api/files", filesRouter); // Up/Download files
-app.use("/api/profile", profileRouter); // Текущий пользователь
+app.use("/api/account", accountRouter); // Текущий пользователь
 
 /* ### === Error handlers block === */
 
