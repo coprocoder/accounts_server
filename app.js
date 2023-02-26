@@ -8,11 +8,6 @@ const logger = require("morgan");
 const cons = require("consolidate");
 const mimetypes = require("./config/mimetypes.js");
 
-//### Mongo sessions
-// const mongoose = require("mongoose")
-// const session = require("express-session");
-// const MongoStore = require("connect-mongo")(session);
-
 var app = express();
 app.use(cors());
 app.options("*", cors());
@@ -66,13 +61,13 @@ app.use("/api", function (req, res, next) {
 
 //### Routers Files
 const authRouter = require("./routes/auth");
-const usersRouter = require("./routes/users");
+const peopleRouter = require("./routes/people");
 const filesRouter = require("./routes/files");
 const accountRouter = require("./routes/account");
 
 //### Routes
 app.use("/api/auth", authRouter); // Авторизация/регистрация
-app.use("/api/people", usersRouter); // Все пользователи
+app.use("/api/people", peopleRouter); // Все пользователи
 app.use("/api/files", filesRouter); // Up/Download files
 app.use("/api/account", accountRouter); // Текущий пользователь
 

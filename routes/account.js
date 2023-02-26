@@ -25,32 +25,49 @@ router.get("/", async (req, res, next) => {
 router.put("/", async (req, res, next) => {
   console.log("UPDATE  req.body", req.body);
 
-  var token_data = jwt.decode(req.headers.auth, config.secret, false, "HS256");
+  const userListSameUsername = await db.get(
+    db.users_database,
+    db.users_collection,
+    {username: req.body.username},
+    {}
+  );
+  if (userListSameUsername.length) {
+    const err = new Error("Пользователь с таким именем уже существует!");
+    err.status = 401;
+    next(err);
+  } else {
+    var token_data = jwt.decode(
+      req.headers.auth,
+      config.secret,
+      false,
+      "HS256"
+    );
 
-  var filter = {email: token_data.email};
-  let update_fields = {};
-  Object.keys(req.body).map((x) => {
-    if (x == "password") {
-      update_fields.password = {
-        $literal: conversion.createHash(req.body.password),
-      };
-    } else {
-      update_fields[x] = req.body[x];
-    }
-  });
-
-  return db
-    .update(db.users_database, db.users_collection, filter, update_fields)
-    .then((results) => {
-      if (results.result.ok) {
-        res.send();
+    var filter = {email: token_data.email};
+    let update_fields = {};
+    Object.keys(req.body).map((x) => {
+      if (x == "password") {
+        update_fields.password = {
+          $literal: conversion.createHash(req.body.password),
+        };
       } else {
-        const err = new Error("Данные не обновлены!");
-        err.status = 400;
-        next(err);
+        update_fields[x] = req.body[x];
       }
-    })
-    .catch(next);
+    });
+
+    return db
+      .update(db.users_database, db.users_collection, filter, update_fields)
+      .then((results) => {
+        if (results.result.ok) {
+          res.send();
+        } else {
+          const err = new Error("Данные не обновлены!");
+          err.status = 400;
+          next(err);
+        }
+      })
+      .catch(next);
+  }
 });
 
 module.exports = router;
